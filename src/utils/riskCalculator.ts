@@ -1,17 +1,30 @@
+
 import { RiskInfo } from '../types';
+import { AssessmentService } from '../api/services/assessment';
+import { environment } from '../config/environment';
 
 export const calculateRisk = async (responses: number[]): Promise<string> => {
-  // Simulate API call - replace with actual API endpoint
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
   try {
-    // Use responses in mock calculation
-    const sum = responses.reduce((acc, val) => acc + val, 0);
-    const mockRisk = Math.min(90, Math.max(10, Math.floor(sum / (responses.length || 1) * 10)));
-    return `${mockRisk}%`;
+    // Transform questionnaire responses to API format
+    const requestData = AssessmentService.transformResponsesToRequest(responses);
+    
+    // Call the prediction API
+    const prediction = await AssessmentService.predict(requestData);
+    
+    // Return risk score as percentage
+    return `${Math.round(prediction.risk_score * 100)}%`;
   } catch (error) {
     console.error('Error calculating risk:', error);
-    throw new Error('Failed to calculate risk assessment');
+    
+    // In development, fall back to mock calculation
+    if (!environment.production && error instanceof Error && error.message.includes('Network')) {
+      console.warn('API unavailable, using mock calculation');
+      const sum = responses.reduce((acc, val) => acc + val, 0);
+      const mockRisk = Math.min(90, Math.max(10, Math.floor(sum / (responses.length || 1) * 10)));
+      return `${mockRisk}%`;
+    }
+    
+    throw new Error('Failed to calculate risk assessment. Please try again.');
   }
 };
 

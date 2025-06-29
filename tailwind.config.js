@@ -1,10 +1,14 @@
 // tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  // Add this line - this is what's missing!
+  darkMode: 'media', // Automatically adapts to system dark/light mode
+  
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  
   theme: {
     extend: {
       colors: {
@@ -38,5 +42,6 @@ module.exports = {
       }
     },
   },
-  plugins: [], // ✅ keep this empty or add Tailwind plugins like `@tailwindcss/forms`, etc.
-};
+  
+  plugins: [],
+}

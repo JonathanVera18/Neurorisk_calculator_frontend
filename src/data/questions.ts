@@ -2,51 +2,51 @@ import { Question } from '../types';
 
 // Updated Questions Data based on neurodevelopmental research
 export const QUESTIONS: Question[] = [
-  { id: 1, text: "Are the subject's parents blood-related (consanguinity)?" },
-  { id: 2, text: "Does the subject have a family history of neurological disorders?" },
-  { id: 3, text: "Has the subject ever had seizures or convulsions?" },
-  { id: 4, text: "History of traumatic brain injury (TBI) or head trauma" },
-  { id: 5, text: "Diagnosed with any psychiatric disorder (depression, bipolar, etc.)" },
-  { id: 6, text: "Does the subject consume psychoactive substances regularly?" },
-  { id: 7, text: "Was the subject born with complications or low weight?" },
-  { id: 8, text: "Does the subject live in extreme poverty?" },
-  { id: 9, text: "Has the subject ever had access restrictions to education?" },
-  { id: 10, text: "Does the subject have access to mental healthcare?" },
-  { id: 11, text: "History of suicide attempts or ideation" },
-  { id: 12, text: "Is the subject on psychotropic or neurological medication?" },
-  { id: 13, text: "Has the subject ever been diagnosed with a disability?" },
-  { id: 14, text: "Level of social support (isolated vs. supported)" },
-  { id: 15, text: "Age of the subject" },
-  { id: 16, text: "Gender of the subject" },
-  { id: 17, text: "Was the subject breastfed during infancy?" },
-  { id: 18, text: "Exposure to violence or trauma (childhood or adulthood)" }
+  { id: 1, text: "Están los padres del sujeto emparentados por consanguinidad?" },
+  { id: 2, text: "¿Tiene el sujeto antecedentes familiares de trastornos neurológicos?" },
+  { id: 3, text: "¿Ha tenido el sujeto alguna vez ataques o convulsiones?" },
+  { id: 4, text: "Antecedentes de lesión cerebral traumática (LCT) o traumatismo craneoencefálico" },
+  { id: 5, text: "Diagnóstico de algún trastorno psiquiátrico (depresión, bipolaridad, etc.)" },
+  { id: 6, text: "¿Consume el sujeto sustancias psicoactivas con regularidad?" },
+  { id: 7, text: "¿El sujeto nació con complicaciones o bajo de peso?" },
+  { id: 8, text: "¿Vive el sujeto en condiciones de extrema pobreza?" },
+  { id: 9, text: "¿Ha tenido el sujeto alguna vez restricciones de acceso a la educación?" },
+  { id: 10, text: "¿Tiene el sujeto acceso a atención de salud mental?" },
+  { id: 11, text: "Intentos de suicidio o ideación suicida" },
+  { id: 12, text: "¿El sujeto toma medicación psicotrópica o neurológica?" },
+  { id: 13, text: "¿Se le ha diagnosticado alguna discapacidad al sujeto?" },
+  { id: 14, text: "Nivel de apoyo social (aislado vs. apoyado)" },
+  { id: 15, text: "Edad del sujeto" },
+  { id: 16, text: "Sexo del sujeto" },
+  { id: 17, text: "¿El sujeto fue amamantado durante la infancia?" },
+  { id: 18, text: "Exposición a violencia o trauma (infancia o edad adulta)" }
 ];
 
 // Different answer options based on question type
-export const BINARY_OPTIONS = ['No', 'Yes'];
+export const BINARY_OPTIONS = ['No', 'Si'];
 
 export const SOCIAL_SUPPORT_OPTIONS = [
-  'Very isolated - no support system',
-  'Somewhat isolated - limited support',
-  'Moderate support - some family/friends',
-  'Strong support - good family/social network'
+  'Muy aislado - sin sistema de apoyo',
+  'Algo aislado - apoyo limitado',
+  'Apoyo moderado - algunos familiares/amigos',
+  'Fuerte apoyo - buena red familiar/social'
 ];
 
 export const AGE_OPTIONS = [
-  '0-5 years',
-  '6-12 years', 
-  '13-17 years',
-  '18-25 years',
-  '26-40 years',
-  '41-60 years',
-  'Over 60 years'
+  '0-5 años',
+  '6-12 años', 
+  '13-17 años',
+  '18-25 años',
+  '26-40 años',
+  '41-60 años',
+  'Mas de 60 años'
 ];
 
 export const GENDER_OPTIONS = [
-  'Male',
-  'Female',
-  'Non-binary',
-  'Prefer not to say'
+  'Hombre',
+  'Mujer',
+  'No binario',
+  'Prefiero no decirlo',
 ];
 
 // Function to get appropriate answer options for each question
