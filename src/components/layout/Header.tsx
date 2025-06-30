@@ -11,11 +11,11 @@ const Header: React.FC = () => {
       {/* Centered container */}
       <div className="header-icon-wrapper flex items-center justify-center gap-3">
         <img 
-          src={myIcon} 
-          alt="App Logo" 
-          className="w-[50px] h-[50px] object-contain cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={handleLogoClick}
-        />
+        src={myIcon} 
+        alt="App Logo" 
+        className="logo-img object-contain cursor-pointer hover:opacity-80 transition-opacity"
+        onClick={handleLogoClick}
+      />
         <h1 className="title-main text-2xl font-bold">
           Calculadora del riesgo de neurodesarrollo
         </h1>

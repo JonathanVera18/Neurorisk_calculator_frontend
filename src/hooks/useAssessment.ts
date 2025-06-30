@@ -1,8 +1,8 @@
 // src/hooks/useAssessment.ts
 import { useState, useCallback } from 'react';
 import { ViewType } from '../types';
-import { AssessmentService } from '../api/services/assessment';
-import { PredictionResponse } from '../api/services/types';
+import { axiosInstance } from '../api/axios.config';
+import { PredictionResponse, PredictionRequest } from '../api/services/types';
 
 interface AssessmentState {
   currentView: ViewType;
@@ -10,10 +10,6 @@ interface AssessmentState {
   results: string;
   fullResults: PredictionResponse | null;
   error: string | null;
-  demographicData: {
-    age: number;
-    gender: 'male' | 'female' | 'other';
-  };
 }
 
 export const useAssessment = () => {
@@ -23,10 +19,6 @@ export const useAssessment = () => {
     results: '',
     fullResults: null,
     error: null,
-    demographicData: {
-      age: 25,
-      gender: 'other',
-    },
   });
 
   const setView = useCallback((view: ViewType) => {
@@ -35,17 +27,6 @@ export const useAssessment = () => {
 
   const setLoading = useCallback((loading: boolean) => {
     setState((prev) => ({ ...prev, isLoading: loading }));
-  }, []);
-
-  const setError = useCallback((error: string | null) => {
-    setState((prev) => ({ ...prev, error }));
-  }, []);
-
-  const setDemographicData = useCallback((data: Partial<AssessmentState['demographicData']>) => {
-    setState((prev) => ({
-      ...prev,
-      demographicData: { ...prev.demographicData, ...data },
-    }));
   }, []);
 
   const handleStartAssessment = useCallback(() => {
@@ -60,59 +41,63 @@ export const useAssessment = () => {
     setView('home');
   }, [setView]);
 
-  const handleQuestionnaireComplete = useCallback(async (responses: number[]) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      // Transform responses to API format
-      const requestData = AssessmentService.transformResponsesToRequest(responses);
+  const handleQuestionnaireComplete = useCallback(
+    async (data: PredictionRequest) => {
+      console.log('📊 Submitting assessment data:', data);
+      setLoading(true);
       
-      // Include demographic data
-      requestData.age = state.demographicData.age;
-      requestData.gender = state.demographicData.gender;
-      
-      // Make prediction request
-      const prediction = await AssessmentService.predict(requestData);
-      
-      // Store results
-      setState((prev) => ({
-        ...prev,
-        results: `${Math.round(prediction.risk_score * 100)}%`,
-        fullResults: prediction,
-        currentView: 'results',
-        isLoading: false,
-      }));
-      
-      // Optionally submit assessment with consent
-      if (window.confirm('Would you like to save this assessment for future reference?')) {
-        try {
-          const assessmentData = {
-            ...requestData,
-            consent_given: true,
-            notes: `Risk level: ${prediction.risk_level}`,
-          };
-          
-          const assessmentResponse = await AssessmentService.submitAssessment(assessmentData);
-          console.log('Assessment saved:', assessmentResponse.assessment_id);
-        } catch (saveError) {
-          console.error('Failed to save assessment:', saveError);
-          // Don't show error - assessment was still calculated
+      try {
+        // Make the API call to /predict endpoint
+        const response = await axiosInstance.post<PredictionResponse>('/predict', data);
+        
+        console.log('✅ Prediction response:', response.data);
+        
+        const prediction = response.data;
+        
+        // Calculate percentage from risk_score (0-1 scale)
+        const riskPercentage = Math.round(prediction.risk_score * 100);
+        
+        // Update state with results
+        setState((prev) => ({
+          ...prev,
+          results: `${riskPercentage}`,
+          fullResults: prediction,
+          currentView: 'results',
+          isLoading: false,
+          error: null,
+        }));
+        
+      } catch (error: unknown) {
+        console.error('❌ Error in assessment:', error);
+        
+        let errorMessage = 'Error al calcular los resultados.';
+        
+        if (error && typeof error === 'object' && 'response' in error) {
+          const axiosError = error as { response?: { status?: number; data?: { detail?: string } } };
+          // Server responded with error
+          if (axiosError.response?.status === 404) {
+            errorMessage = 'No se puede conectar con el servidor. Verifique que el backend esté ejecutándose en el puerto 8000.';
+          } else if (axiosError.response?.data?.detail) {
+            errorMessage = axiosError.response.data.detail;
+          } else {
+            errorMessage = `Error del servidor: ${axiosError.response?.status}`;
+          }
+        } else if (error && typeof error === 'object' && 'request' in error) {
+          // Request made but no response
+          errorMessage = 'No se puede conectar con el servidor. Verifique su conexión.';
         }
+        
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          error: errorMessage,
+        }));
+        
+        alert(errorMessage);
       }
-    } catch (error) {
-      console.error('Error calculating risk:', error);
-      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
-      setLoading(false);
-      
-      // Show user-friendly error
-      alert(
-        error instanceof Error 
-          ? error.message 
-          : 'Error calculating results. Please check your connection and try again.'
-      );
-    }
-  }, [state.demographicData, setLoading, setError]);
+    },
+    [setLoading]
+  );
 
   const handleRestart = useCallback(() => {
     setState({
@@ -121,28 +106,19 @@ export const useAssessment = () => {
       results: '',
       fullResults: null,
       error: null,
-      demographicData: {
-        age: 25,
-        gender: 'other',
-      },
     });
   }, []);
 
   return {
-    // State
     currentView: state.currentView,
     isLoading: state.isLoading,
     results: state.results,
     fullResults: state.fullResults,
     error: state.error,
-    demographicData: state.demographicData,
-    
-    // Actions
     handleStartAssessment,
     handleConsentAccept,
     handleConsentDecline,
     handleQuestionnaireComplete,
     handleRestart,
-    setDemographicData,
   };
 };

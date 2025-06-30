@@ -1,11 +1,12 @@
+// src/api/services/types.ts
 
-// Request Types
+// Request Types matching backend exactly
 export interface PredictionRequest {
   // Demographics
   age: number;
-  gender: 'male' | 'female' | 'other';
+  gender: string; // "M", "F", or "O"
   
-  // Clinical Risk Factors
+  // Clinical Risk Factors (all boolean)
   consanguinity: boolean;
   family_neuro_history: boolean;
   seizures_history: boolean;
@@ -21,7 +22,7 @@ export interface PredictionRequest {
   education_access_issues: boolean;
   healthcare_access: boolean;
   disability_diagnosis: boolean;
-  social_support_level: 'strong' | 'moderate' | 'weak' | 'isolated';
+  social_support_level: string; // "strong", "moderate", "weak", "isolated"
   breastfed_infancy: boolean;
   violence_exposure: boolean;
 }
@@ -33,24 +34,24 @@ export interface AssessmentRequest extends PredictionRequest {
   notes?: string;
 }
 
-// Response Types
+// Response Types based on actual API response
 export interface PredictionResponse {
   risk_score: number;
-  risk_level: 'low' | 'moderate' | 'high';
+  risk_level: string; // "low", "moderate", "high"
   confidence_score: number;
   risk_factors: string[];
   protective_factors: string[];
   recommendations: string[];
-  interpretation: {
+  feature_importance?: Record<string, number>;
+  interpretation?: {
     summary: string;
     description: string;
     confidence_note: string;
-    action_priority: 'routine' | 'elevated' | 'urgent';
+    action_priority: string;
     follow_up_months: number;
   };
-  feature_importance?: Record<string, number>;
-  model_version: string;
-  assessment_date: string;
+  model_version?: string;
+  assessment_date?: string;
 }
 
 export interface AssessmentResponse {
@@ -68,61 +69,10 @@ export interface ErrorResponse {
   timestamp: string;
 }
 
-export interface StatsResponse {
-  total_assessments: number;
-  assessments_by_risk_level: {
-    low: number;
-    moderate: number;
-    high: number;
-  };
-  assessments_by_gender: Record<string, number>;
-  average_risk_score: number;
-  average_age: number;
-  most_common_risk_factors: Array<{
-    factor: string;
-    frequency: number;
-  }>;
-  model_performance: {
-    accuracy?: number;
-    auc_roc?: number;
-    f1_score?: number;
-  };
-  recent_trends: {
-    assessments_last_30_days: number;
-    average_risk_last_30_days: number;
-    high_risk_percentage: number;
-  };
-}
-
-export interface LoginRequest {
-  api_key: string;
-}
-
-export interface TokenResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-  scopes: string[];
-}
-
-// Health check
-export interface HealthCheckResponse {
-  status: 'healthy' | 'degraded' | 'unhealthy';
-  version: string;
-  timestamp: string;
-  services: {
-    database: {
-      status: string;
-      response_time_ms?: number;
-    };
-    ml_model: {
-      status: string;
-      version?: string;
-      memory_usage_mb?: number;
-    };
-    cache?: {
-      status: string;
-      hit_rate?: number;
-    };
-  };
+// Question mapping interface
+export interface QuestionMapping {
+  questionIndex: number;
+  fieldName: keyof PredictionRequest;
+  transform?: (value: number) => boolean | string;
+  defaultValue?: boolean | number | string;
 }

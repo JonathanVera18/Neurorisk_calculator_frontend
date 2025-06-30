@@ -767,3 +767,28 @@ body {
   transform: none;
   box-shadow: none;
 }
+.logo-img {
+  width: 1.5rem !important; /* 24px for mobile */
+  height: 1.5rem !important;
+}
+
+@media (min-width: 640px) {
+  .logo-img {
+    width: 2rem !important; /* 32px for small screens */
+    height: 2rem !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .logo-img {
+    width: 2.5rem !important; /* 40px for medium screens */
+    height: 2.5rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .logo-img {
+    width: 3rem !important; /* 48px for large screens */
+    height: 3rem !important;
+  }
+}

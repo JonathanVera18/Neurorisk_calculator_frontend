@@ -3,10 +3,10 @@ import { RiskInfo } from '../types';
 import { AssessmentService } from '../api/services/assessment';
 import { environment } from '../config/environment';
 
-export const calculateRisk = async (responses: number[]): Promise<string> => {
+export const calculateRisk = async (responses: number[], demographics: { age: number; gender: string }): Promise<string> => {
   try {
     // Transform questionnaire responses to API format
-    const requestData = AssessmentService.transformResponsesToRequest(responses);
+    const requestData = AssessmentService.transformResponsesToRequest(responses, demographics);
     
     // Call the prediction API
     const prediction = await AssessmentService.predict(requestData);

@@ -1,3 +1,4 @@
+// src/App.tsx
 import React from 'react';
 import { useAssessment } from './hooks/useAssessment';
 import Header from './components/layout/Header';
@@ -7,12 +8,14 @@ import ConsentModal from './components/assessment/ConsentModal';
 import Questionnaire from './components/assessment/Questionnaire';
 import ResultsDisplay from './components/assessment/ResultsDisplay';
 import HomePage from './pages/HomePage';
-
+import { PredictionRequest } from './api/services/types'; // Import from the correct location
+// import ApiTester from './components/debug/ApiTester'; // Uncomment for debugging
 const App: React.FC = () => {
   const {
     currentView,
     isLoading,
     results,
+    fullResults,
     handleStartAssessment,
     handleConsentAccept,
     handleConsentDecline,
@@ -38,16 +41,27 @@ const App: React.FC = () => {
         )}
 
         {currentView === 'questionnaire' && (
-          <Questionnaire onComplete={handleQuestionnaireComplete} />
+          <Questionnaire onComplete={(data) => {
+            // Convert QuestionnaireData to PredictionRequest format
+            const predictionRequest = data as unknown as PredictionRequest;
+            handleQuestionnaireComplete(predictionRequest);
+          }} />
         )}
 
         {currentView === 'results' && (
-          <ResultsDisplay riskPercentage={results} onRestart={handleRestart} />
+          <ResultsDisplay 
+            riskPercentage={results} 
+            onRestart={handleRestart}
+            fullResults={fullResults}
+          />
         )}
 
         {/* Footer */}
         <Footer />
       </div>
+
+      {/* Debug component - remove in production */}
+      {/* <ApiTester /> */}
     </div>
   );
 };

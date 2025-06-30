@@ -35,8 +35,8 @@ const ResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({
           <div className="icon-container mx-auto mb-6">
             <Brain className="w-10 h-10 text-white" />
           </div>
-          <h2 className="title-section mb-4">Assessment Results</h2>
-          <p className="subtitle-main">Based on your responses to the questionnaire</p>
+          <h2 className="title-section mb-4">Resultados de la evaluación</h2>
+          <p className="subtitle-main">Según sus respuestas al cuestionario</p>
         </div>
         
         {/* Circular Progress Indicator */}
@@ -80,22 +80,25 @@ const ResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({
         {fullResults && (
           <>
             {/* Risk Interpretation */}
-            <div className={`${riskInfo.bg} ${riskInfo.border} border rounded-lg p-6 mb-8`}>
-              <h3 className={`font-semibold ${riskInfo.text} mb-2`}>
-                {fullResults.interpretation.summary}
-              </h3>
-              <p className={`${riskInfo.text} opacity-90 text-sm`}>
-                {fullResults.interpretation.description}
-              </p>
-              <div className="flex items-center gap-2 mt-4">
-                <Calendar className={`w-4 h-4 ${riskInfo.text}`} />
-                <span className={`text-sm ${riskInfo.text}`}>
-                  Follow-up recommended in {fullResults.interpretation.follow_up_months} month(s)
-                </span>
+            {fullResults.interpretation && (
+              <div className={`${riskInfo.bg} ${riskInfo.border} border rounded-lg p-6 mb-8`}>
+                <h3 className={`font-semibold ${riskInfo.text} mb-2`}>
+                  {fullResults.interpretation.summary}
+                </h3>
+                <p className={`${riskInfo.text} opacity-90 text-sm`}>
+                  {fullResults.interpretation.description}
+                </p>
+                <div className="flex items-center gap-2 mt-4">
+                  <Calendar className={`w-4 h-4 ${riskInfo.text}`} />
+                  <span className={`text-sm ${riskInfo.text}`}>
+                    Follow-up recommended in {fullResults.interpretation.follow_up_months} month(s)
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Confidence Score */}
+            {/*
             <div className="bg-gray-50 rounded-lg p-4 mb-8">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Model Confidence</span>
@@ -110,10 +113,10 @@ const ResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({
                 />
               </div>
               <p className="text-xs text-gray-500 mt-2">
-                {fullResults.interpretation.confidence_note}
+                {fullResults.interpretation?.confidence_note}
               </p>
             </div>
-
+            */}
             {/* Risk Factors */}
             {fullResults.risk_factors.length > 0 && (
               <div className="mb-8">
@@ -172,12 +175,12 @@ const ResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({
         {/* Disclaimer */}
         <div className="card-secondary mb-8 text-left">
           <p className="text-body">
-            <strong>Important:</strong> This result is an estimate based on statistical models and is not a medical diagnosis. 
-            Please consult with a qualified healthcare professional for proper evaluation and guidance.
+            <strong>Importante:</strong> Este resultado es una estimación basada en modelos estadísticos y no constituye un diagnóstico médico. 
+            Consulte a un profesional sanitario cualificado para obtener una evaluación y orientación adecuadas.
           </p>
           {fullResults && (
             <p className="text-xs text-gray-500 mt-2">
-              Model Version: {fullResults.model_version} | Assessment Date: {new Date(fullResults.assessment_date).toLocaleDateString()}
+            
             </p>
           )}
         </div>
@@ -186,7 +189,7 @@ const ResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({
           onClick={onRestart}
           className="btn-primary btn-large"
         >
-          Take Assessment Again
+          Volver a Evaluar
         </button>
       </div>
     </div>
